@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,10 +15,12 @@ namespace TechTreeMVCWebApplication.Areas.Admin.Controllers
     public class UsersToCategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IDataFunctions _dataFunctions;
 
-        public UsersToCategoryController(ApplicationDbContext context)
+        public UsersToCategoryController(ApplicationDbContext context, IDataFunctions dataFunctions)
         {
             _context = context;
+            _dataFunctions = dataFunctions;
         }
 
         [HttpGet]
@@ -49,36 +50,38 @@ namespace TechTreeMVCWebApplication.Areas.Admin.Controllers
         {
             List<UserCategory> usersSelectedForCategoryToAdd = null;
 
-            if(usersCategoryListModel.UsersSelected != null)
+            if (usersCategoryListModel.UsersSelected != null)
             {
                 usersSelectedForCategoryToAdd = await GetUsersForCategoryToAdd(usersCategoryListModel);
             }
 
             var usersSelectedForCategoryToDelete = await GetUsersForCategoryToDelete(usersCategoryListModel.CategoryId);
-            
-            using (var dbContextTransaction = await _context.Database.BeginTransactionAsync())
-            {
-                try
-                {
 
-                    _context.RemoveRange(usersSelectedForCategoryToDelete);
-                    await _context.SaveChangesAsync();
+            await _dataFunctions.UpdateUserCategoryEntityAsync(usersSelectedForCategoryToDelete, usersSelectedForCategoryToAdd);
 
-                    if (usersSelectedForCategoryToAdd != null)
-                    {
-                        _context.AddRange(usersSelectedForCategoryToAdd);
-                        await _context.SaveChangesAsync();
-                    }
-                    await dbContextTransaction.CommitAsync();
+            //using (var dbContextTransaction = await _context.Database.BeginTransactionAsync())
+            //{
+            //    try
+            //    {
 
-                }
+            //        _context.RemoveRange(usersSelectedForCategoryToDelete);
+            //        await _context.SaveChangesAsync();
 
-                catch (Exception ex)
-                {
-                    await dbContextTransaction.DisposeAsync();
-                }
-            }
-           
+            //        if (usersSelectedForCategoryToAdd != null)
+            //        {
+            //            _context.AddRange(usersSelectedForCategoryToAdd);
+            //            await _context.SaveChangesAsync();
+            //        }
+            //        await dbContextTransaction.CommitAsync();
+
+            //    }
+
+            //    catch (Exception ex)
+            //    {
+            //        await dbContextTransaction.DisposeAsync();
+            //    }
+            //}
+
             usersCategoryListModel.Users = await GetAllUsers();
 
             return PartialView("_UsersListViewPartial", usersCategoryListModel);
@@ -105,7 +108,7 @@ namespace TechTreeMVCWebApplication.Areas.Admin.Controllers
 
         private async Task<List<UserCategory>> GetUsersForCategoryToAdd(UsersCategoryListModel usersCategoryListModel)
         {
-            var usersForCategoryToAdd =  (from userCat in usersCategoryListModel.UsersSelected
+            var usersForCategoryToAdd = (from userCat in usersCategoryListModel.UsersSelected
                                          select new UserCategory
                                          {
                                              CategoryId = usersCategoryListModel.CategoryId,
@@ -113,7 +116,7 @@ namespace TechTreeMVCWebApplication.Areas.Admin.Controllers
                                          }).ToList();
 
             return await Task.FromResult(usersForCategoryToAdd);
-        
+
         }
         private async Task<List<UserCategory>> GetUsersForCategoryToDelete(int categoryId)
         {
@@ -121,9 +124,9 @@ namespace TechTreeMVCWebApplication.Areas.Admin.Controllers
                                                   where userCat.CategoryId == categoryId
                                                   select new UserCategory
                                                   {
-                                                        Id = userCat.Id,
-                                                        CategoryId = categoryId,
-                                                        UserId = userCat.UserId
+                                                      Id = userCat.Id,
+                                                      CategoryId = categoryId,
+                                                      UserId = userCat.UserId
                                                   }
                                                   ).ToListAsync();
             return usersForCategoryToDelete;
@@ -142,5 +145,5 @@ namespace TechTreeMVCWebApplication.Areas.Admin.Controllers
 
 
 
-        }
+    }
 }
