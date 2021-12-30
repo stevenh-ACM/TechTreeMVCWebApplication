@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
 using System;
+=======
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,8 +41,13 @@ namespace TechTreeMVCWebApplication.Controllers
             categoriesToUserModel.UserId = userId;
 
             return View(categoriesToUserModel);
+<<<<<<< HEAD
         }
 
+=======
+
+        }
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(string[] categoriesSelected)
@@ -47,11 +55,20 @@ namespace TechTreeMVCWebApplication.Controllers
             var userId = _userManager.GetUserAsync(User).Result?.Id;
 
             List<UserCategory> userCategoriesToDelete = await GetCategoriesToDeleteForUser(userId);
+<<<<<<< HEAD
             List<UserCategory> userCategoriesToAdd =  GetCategoriesToAddForUser(categoriesSelected, userId);
+=======
+
+            List<UserCategory> userCategoriesToAdd = GetCategoriesToAddForUser(categoriesSelected, userId);
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
 
             await _dataFunctions.UpdateUserCategoryEntityAsync(userCategoriesToDelete, userCategoriesToAdd);
 
             return RedirectToAction("Index", "Home");
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
         }
 
         private async Task<List<Category>> GetCategoriesThatHaveContent()
@@ -66,20 +83,38 @@ namespace TechTreeMVCWebApplication.Controllers
                                                        Id = category.Id,
                                                        Title = category.Title,
                                                        Description = category.Description
+<<<<<<< HEAD
                                                    }).Distinct().ToListAsync();
 
             return categoriesThatHaveContent;
         }
+=======
+
+                                                   }).Distinct().ToListAsync();
+            return categoriesThatHaveContent;
+
+        }
+
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
         private async Task<List<Category>> GetCategoriesCurrentlySavedForUser(string userId)
         {
             var categoriesCurrentlySavedForUser = await (from userCategory in _context.UserCategory
                                                          where userCategory.UserId == userId
                                                          select new Category
                                                          {
+<<<<<<< HEAD
                                                              Id = userCategory.CategoryId,
                                                          }).ToListAsync();
             return categoriesCurrentlySavedForUser;
         }
+=======
+                                                             Id = userCategory.CategoryId
+                                                         }).ToListAsync();
+            return categoriesCurrentlySavedForUser;
+
+        }
+
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
         private async Task<List<UserCategory>> GetCategoriesToDeleteForUser(string userId)
         {
             var categoriesToDelete = await (from userCat in _context.UserCategory
@@ -90,7 +125,10 @@ namespace TechTreeMVCWebApplication.Controllers
                                                 CategoryId = userCat.CategoryId,
                                                 UserId = userId
                                             }).ToListAsync();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
             return categoriesToDelete;
         }
 
@@ -102,10 +140,16 @@ namespace TechTreeMVCWebApplication.Controllers
                                        UserId = userId,
                                        CategoryId = int.Parse(categoryId)
                                    }).ToList();
+<<<<<<< HEAD
 
             return categoriesToAdd;
                 
         }
 
+=======
+            return categoriesToAdd;
+
+        }
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using System.Linq;
+=======
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
 using System.Threading.Tasks;
 using TechTreeMVCWebApplication.Entities;
 
@@ -32,7 +35,10 @@ namespace TechTreeMVCWebApplication.Data
                     await dbContextTransaction.CommitAsync();
 
                 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5e70a58685a3b76d1267297bc365fd9bd4d8cd67
                 catch (Exception ex)
                 {
                     await dbContextTransaction.DisposeAsync();
